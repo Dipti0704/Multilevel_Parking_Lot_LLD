@@ -5,7 +5,7 @@ It simulates real-world parking lot operations like parking, slot allocation, bi
 
 ---
 
-## 🚗 Features
+##  Features
 - Supports multiple vehicle types:
   - Motorcycle
   - Car
@@ -28,7 +28,7 @@ It simulates real-world parking lot operations like parking, slot allocation, bi
 
 ---
 
-## 🏗️ Design Patterns Used
+##  Design Patterns Used
 - **Strategy Pattern**  
   - For pricing (`PricingStrategy` → `HourlyPricingStrategy`, `FlatPricingStrategy`)  
   - For slot allocation (`SlotAllocationStrategy` → `NearestSlotStrategy`, `RandomSlotStrategy`)  
