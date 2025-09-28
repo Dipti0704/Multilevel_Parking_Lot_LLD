@@ -1,0 +1,112 @@
+@startuml
+skinparam classAttributeIconSize 0
+
+'=======================
+' Enumerations
+'=======================
+enum SpotType {
+  SMALL
+  MEDIUM
+  LARGE
+  ELECTRIC
+}
+
+enum VehicleSize {
+  SMALL
+  MEDIUM
+  LARGE
+}
+
+'=======================
+' Classes
+'=======================
+class Vehicle {
+  -String vehicleNumber
+  -VehicleSize size
+  -boolean isElectric
+  -boolean wantsCharging
+}
+
+class Ticket {
+  -int ticketId
+  -Vehicle vehicle
+  -ParkingSpot spot
+  -Date entryTime
+  -boolean isUsingCharging
+}
+
+class ParkingSpot {
+  -int id
+  -SpotType type
+  -boolean isAvailable
+  -Vehicle currentVehicle
+  -boolean hasChargingPoint
+  +park(vehicle: Vehicle): boolean
+  +vacate(): void
+}
+
+class ParkingLot {
+  -int lotId
+  -List<ParkingSpot> spots
+  -SlotAllocationStrategy allocationStrategy
+  -List<EntryGate> entryGates
+  -List<ExitGate> exitGates
+  +getAvailableSpot(vehicle: Vehicle, entryGateId: int): ParkingSpot
+}
+
+class EntryGate {
+  -int gateId
+  -ParkingLot lot
+  +generateTicket(vehicle: Vehicle): Ticket
+}
+
+class ExitGate {
+  -int gateId
+  -PricingStrategy pricingStrategy
+  +processExit(ticket: Ticket): double
+}
+
+'=======================
+' Interfaces & Strategies
+'=======================
+interface SlotAllocationStrategy {
+  +findSpot(spots: List<ParkingSpot>, vehicle: Vehicle, entryGateId: int): ParkingSpot
+}
+
+class NearestSlotStrategy {
+  +findSpot(spots: List<ParkingSpot>, vehicle: Vehicle, entryGateId: int): ParkingSpot
+}
+
+SlotAllocationStrategy <|.. NearestSlotStrategy
+
+interface PricingStrategy {
+  +calculatePrice(ticket: Ticket): double
+}
+
+class PerHourPricingStrategy {
+  -Map<SpotType, Double> hourlyRates
+  -double chargingFeePerHour
+  +calculatePrice(ticket: Ticket): double
+}
+
+PricingStrategy <|.. PerHourPricingStrategy
+
+'=======================
+' Relationships
+'=======================
+Vehicle --> VehicleSize
+ParkingSpot --> Vehicle
+ParkingSpot --> SpotType
+Ticket --> Vehicle
+Ticket --> ParkingSpot
+ParkingLot --> ParkingSpot
+ParkingLot --> EntryGate
+ParkingLot --> ExitGate
+EntryGate --> Ticket
+ExitGate --> Ticket
+ExitGate --> PricingStrategy
+ParkingLot --> SlotAllocationStrategy
+NearestSlotStrategy --> ParkingSpot
+PerHourPricingStrategy --> SpotType
+
+@enduml
